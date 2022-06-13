@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户权限</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
+    <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
+    <link href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="modal-dialog" style="margin-top: 10%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">添加用户权限</h4>
+                    </div>
+                    <form id="loginForm" onsubmit="return false;" method="post" action="{% url 'draw:login' %}">
+                        {% csrf_token %}
+                        <div class="modal-body" id = "model-body">
+                            <p id="error_msg" style="color: red"></p>
+                            <div class="form-group">
+                                <input type="text" class="form-control"placeholder="用户名称" autocomplete="off" id="username">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="power_choice" id="add_draw">
+                                    <label class="form-check-label" for="add_draw">
+                                        增加问题的权限
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="power_choice" id="add_power">
+                                    <label class="form-check-label" for="add_power">
+                                        增加权限的权限
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary form-control" onclick="AddNewPower()" value="添加">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/admin/js/jquery.min.js"></script>
+<script src="/static/admin/js/bootstrap.min.js"></script>
+<script src="/static/admin/js/myajax.js"></script>
+</body>
+</html>
