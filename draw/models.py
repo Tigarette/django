@@ -16,6 +16,7 @@ class DrawQuestion(models.Model):
 
 
 class MyUser(AbstractUser):
+    likes = models.PositiveIntegerField("喜欢", default=0, editable=False)
     boom_num = models.IntegerField(default=0)
     nick_name = models.CharField(max_length=10)
     add_draw = models.CharField(max_length=10)
@@ -44,3 +45,19 @@ class EmailPro(models.Model):
         db_table = 'emailpro'
         verbose_name = '邮箱验证码'
         verbose_name_plural = verbose_name
+
+
+class UpdateLog(models.Model):
+    log_text = models.TextField(max_length=10000000)
+    pub_date = models.DateTimeField('date published')
+
+    def __str__(self):
+        return self.log_text
+
+
+class LikeNum(models.Model):
+    user = models.ForeignKey(MyUser, null=True, on_delete=models.SET_NULL, related_name='Like_id')
+    liked_user = models.ForeignKey(MyUser, null=True, on_delete=models.SET_NULL, related_name='Liked_id')
+
+    class Meta:
+        verbose_name_plural = 'user'

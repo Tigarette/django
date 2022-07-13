@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 
-
 app_name = "draw"
 urlpatterns = [
     path('', views.index, name='index'),
@@ -16,5 +15,7 @@ urlpatterns = [
     path('forget/', views.forget_psw, name='forget'),
     path('change/', views.change_psw, name='change'),
     path('adminreg/', views.admin_reg, name='admin_reg'),
-    path('<str:username>/', views.user_main, name='user_main'),
+    path('log/', views.update_log, name='update_log'),
+    path('addLike/', views.add_likes, name='add_likes'),
+    path('user/<str:username>/', views.user_main, name='user_main'),
 ]

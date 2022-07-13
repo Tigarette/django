@@ -7,3 +7,6 @@ function add_power(){
 function change_psw(){
     window.location.href = "/draw/change/"
 }
+function index(){
+    window.location.href = "/draw/"
+}

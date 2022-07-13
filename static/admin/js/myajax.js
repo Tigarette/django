@@ -342,3 +342,61 @@ function EmailRightThree(){
         }
     })
 }
+function UpdateLog(){
+    var have_log = $('#have_log').val();
+    var not_log = $('#not_log').val();
+    if(typeof (not_log) == "undefined"){
+        var msg = 1;
+    }else{
+        var msg = 0;
+    }
+    $.ajax({
+        type: "POST",
+        data: {
+            "have_log":$('#have_log').val(),
+            "not_log":$('#not_log').val(),
+            "msg":msg,
+        },
+        cache: false,
+        async: true,
+        datatype: 'text',
+        success: function (data){
+            if(data == "success"){
+                document.getElementById("error_msg").innerHTML = "修改成功"
+            }
+        },
+        error: function (){
+            alert("请刷新后重试")
+        }
+    })
+}
+function AddLikes(liked_id,like_id){
+    $.ajax({
+        type: "POST",
+        data: {
+            "liked_id":liked_id,
+            "like_id":like_id,
+            "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+        },
+        cache: false,
+        async: true,
+        datatype: 'text',
+        url:'/draw/addLike/',
+        success: function (data){
+            if(data == "not_login"){
+                alert("请先登录");
+            }
+            var data = data.split('+');
+            if(data[0] == "like"){
+                document.getElementById(liked_id).className = "fa-solid fa-thumbs-up"
+                document.getElementById(liked_id + "999").innerHTML = data[1]
+            }else if (data[0] == "not_like") {
+                document.getElementById(liked_id).className = "fa-regular fa-thumbs-up"
+                document.getElementById(liked_id + "999").innerHTML = data[1]
+            }
+        },
+        error: function (){
+            alert("请刷新后重试")
+        }
+    })
+}

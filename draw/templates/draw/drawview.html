@@ -6,7 +6,7 @@
     <title>张竣的抽签列表</title>
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
-    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -75,7 +75,7 @@
                                 var value= "{{ user.email }}";
                                 value = value.split('@');
                                 value = value[0];
-                                img1.src = "http://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
+                                img1.src = "https://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
                             }
                         </script>
                     {% else %}
@@ -119,7 +119,7 @@
                 <div class="container-fluid">
                     {% if latest_question_list %}
                     <div class="row">
-                        {% for question in latest_question_list %}
+                        {% for question in curuent_page %}
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-blue">
                                 <div class="inner">
@@ -152,11 +152,48 @@
                     {% endif %}
                 </div>
             </section>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if not curuent_page.has_previous %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="?page={{ curuent_page.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% for page_range in pag_range %}
+                    {% if curuent_page_num == page_range %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ page_range }}">{{ page_range }}</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_range }}">{{ page_range }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if not curuent_page.has_next %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
     <script src="/static/admin/js/jquery.min.js"></script>
     <script src="/static/admin/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
     <script src="/static/admin/js/myajax.js"></script>
     <script src="/static/admin/js/myJavascript.js"></script>
 </body>

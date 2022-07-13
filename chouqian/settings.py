@@ -135,3 +135,4 @@ EMAIL_USE_TLS = False
 
 EMAIL_FROM = '2054806568@qq.com'
 
+CSRF_TRUSTED_ORIGINS = ["https://tyy.tlinx.top"]

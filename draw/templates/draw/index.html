@@ -6,8 +6,8 @@
     <title>张竣的主页</title>
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
-    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.1.1/css/all.css" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
@@ -75,7 +75,7 @@
                                 var value= "{{ user.email }}";
                                 value = value.split('@');
                                 value = value[0];
-                                img1.src = "http://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
+                                img1.src = "https://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
                             }
                         </script>
                     {% else %}
@@ -106,6 +106,12 @@
                             <a href="{% url 'draw:detail' %}" class="nav-link">
                                 <i class="nav-icon fas fa-solid fa-file"></i>
                                 <p>抽签</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'draw:detail' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-video"></i>
+                                <p>视频</p>
                             </a>
                         </li>
                     </ul>
@@ -139,48 +145,106 @@
                                 <div class="card-body">
                                     <ul class="list-group">
                                         <li class="list-group-item">
-                                            <div class="row">
-                                                <div class="col-sm-4">
+                                            <div class="row" style="text-align: center">
+                                                <div class="col-sm-3">
                                                     <h6 class="modal-title">排名</h6>
                                                 </div>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <h6 class="modal-title">姓名</h6>
                                                 </div>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <h6 class="modal-title">中奖次数</h6>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <h6 class="modal-title">为他点赞</h6>
                                                 </div>
                                             </div>
                                         </li>
-                                        {% for user in user_list %}
+                                        {% for user in curuent_page %}
                                         <li class="list-group-item">
-                                            <div class="row">
-                                                <div class="col-sm-4">
+                                            <div class="row" style="text-align: center">
+                                                <div class="col-sm-3">
                                                     <h6 class="modal-title">{{ forloop.counter }}</h6>
                                                 </div>
-                                                <div class="col-sm-4">
-                                                    <a href="{% url 'draw:user_main' user.username %}">
-                                                        <h6 class="modal-title">{{ user.nick_name }}</h6>
+                                                <div class="col-sm-3">
+                                                    <a href="{% url 'draw:user_main' user.user.username %}">
+                                                        <h6 class="modal-title">{{ user.user.nick_name }}</h6>
                                                     </a>
                                                 </div>
-                                                <div class="col-sm-4">
-                                                    <h6 class="modal-title">{{ user.boom_num }}</h6>
+                                                <div class="col-sm-3">
+                                                    <h6 class="modal-title">{{ user.user.boom_num }}</h6>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                     <form id="loginForm" onsubmit="return false;" method="post" action="{% url 'draw:login' %}">
+                                                        {% csrf_token %}
+                                                         {% if user.msg == "1" %}
+                                                         <i id="{{ user.user.id }}" class="fa-solid fa-thumbs-up" onclick="AddLikes('{{ user.user.id }}', '{{ request.user.id }}')" style="cursor:pointer;"></i>
+                                                         <span id="{{ user.user.id }}999">{{ user.user.likes }}</span>
+                                                         {% else %}
+                                                         <i id="{{ user.user.id }}" class="fa-regular fa-thumbs-up" onclick="AddLikes('{{ user.user.id }}', '{{ request.user.id }}')" style="cursor:pointer;"></i>
+                                                         <span id="{{ user.user.id }}999">{{ user.user.likes }}</span>
+                                                         {% endif %}
+                                                    </form>
                                                 </div>
                                             </div>
                                         </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
+                                <div class="card-footter">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-center">
+                                            {% if not curuent_page.has_previous %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="?page={{ curuent_page.previous_page_number }}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% for page_range in pag_range %}
+                                            {% if curuent_page_num == page_range %}
+                                            <li class="page-item active"><a class="page-link" href="?page={{ page_range }}">{{ page_range }}</a></li>
+                                            {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ page_range }}">{{ page_range }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% if not curuent_page.has_next %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="card">
-                                <div class="card-header">
-                                    Quote
+                                <div class="card-header bg-secondary" style="text-align: center;">
+                                    更新日志
                                 </div>
                                 <div class="card-body">
-                                        <p>A well-known quote, contained in a blockquote element.</p>
-                                        <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+                                    <p style="white-space: pre-line">{{ log.log_text }}</p>
                                 </div>
+                                {% if request.user.id == 1 %}
+                                <div class="card-footer text-muted" style="float: right">
+                                    <a href="{% url 'draw:update_log' %}" class="btn btn-primary" style="float: right">修改</a>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -190,7 +254,7 @@
     </div>
     <script src="/static/admin/js/jquery.min.js"></script>
     <script src="/static/admin/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
     <script src="/static/admin/js/myJavascript.js"></script>
     <script src="/static/admin/js/myajax.js"></script>
     <script>

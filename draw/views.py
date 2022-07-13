@@ -4,12 +4,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
-from models import DrawQuestion, DrawChoice, MyUser, EmailPro
+from .models import DrawQuestion, DrawChoice, MyUser, EmailPro, UpdateLog, LikeNum
 import random
 from django.utils import timezone
 import sqlite3
 from django.core.mail import send_mail
 from chouqian.settings import EMAIL_FROM
+from django.core.paginator import Paginator
+from django.db.models import F
 
 
 # Create your views here.
@@ -17,11 +19,75 @@ from chouqian.settings import EMAIL_FROM
 
 def index(request):
     user_list = MyUser.objects.order_by('-boom_num')[:]
-    template = loader.get_template('draw/index.html')
-    context = {
-        'user_list': user_list,
-    }
-    return HttpResponse(template.render(context, request))
+    log_list = UpdateLog.objects.order_by('-pub_date')[:]
+    log = ""
+    if log_list:
+        log = log_list[0]
+    user = request.user
+    liked_user_list = list()
+    if LikeNum.objects.filter(user_id=user.id):
+        data = LikeNum.objects.filter(user_id=user.id)
+        for user1 in user_list:
+            flag = False
+            for liked in data:
+                if liked.liked_user_id == user1.id:
+                    liked_user_list.append({
+                        "user": user1,
+                        'msg': '1'
+                    })
+                    flag = True
+                    break
+            if not flag:
+                liked_user_list.append({
+                    "user": user1,
+                })
+        paginator = Paginator(liked_user_list, 12)
+        pag_num = paginator.num_pages
+        curuent_page_num = int(request.GET.get('page', 1))
+        curuent_page = paginator.page(curuent_page_num)
+        if pag_num < 11:
+            pag_range = paginator.page_range
+        elif pag_num > 11:
+            if curuent_page_num < 6:
+                pag_range = range(1, 11)
+            elif curuent_page_num > paginator.num_pages - 5:
+                pag_range = range(pag_num - 9, pag_num + 1)
+            else:
+                pag_range = range(curuent_page_num - 5, curuent_page_num + 5)
+        return render(request, 'draw/index.html', {
+            'log': log,
+            'liked_user_list': liked_user_list,
+            "paginator": paginator,
+            "curuent_page": curuent_page,
+            "curuent_page_num": curuent_page_num,
+            "pag_range": pag_range,
+        })
+    else:
+        for user1 in user_list:
+            liked_user_list.append({
+                "user": user1,
+            })
+        paginator = Paginator(liked_user_list, 12)
+        pag_num = paginator.num_pages
+        curuent_page_num = int(request.GET.get('page', 1))
+        curuent_page = paginator.page(curuent_page_num)
+        if pag_num < 11:
+            pag_range = paginator.page_range
+        elif pag_num > 11:
+            if curuent_page_num < 6:
+                pag_range = range(1, 11)
+            elif curuent_page_num > paginator.num_pages - 5:
+                pag_range = range(pag_num - 9, pag_num + 1)
+            else:
+                 pag_range = range(curuent_page_num - 5, curuent_page_num + 5)
+        return render(request, 'draw/index.html', {
+            'liked_user_list': liked_user_list,
+            'log': log,
+            "paginator": paginator,
+            "curuent_page": curuent_page,
+            "curuent_page_num": curuent_page_num,
+            "pag_range": pag_range,
+        })
 
 
 @csrf_exempt
@@ -50,9 +116,26 @@ def sign_in(request):
 
 def detail(request):
     latest_question_list = DrawQuestion.objects.order_by('-pub_date')[:]
+    paginator = Paginator(latest_question_list, 16)
+    pag_num = paginator.num_pages
+    curuent_page_num = int(request.GET.get('page', 1))
+    curuent_page = paginator.page(curuent_page_num)
+    if pag_num < 11:
+        pag_range = paginator.page_range
+    elif pag_num > 11:
+        if curuent_page_num < 6:
+            pag_range = range(1, 11)
+        elif curuent_page_num > paginator.num_pages - 5:
+            pag_range = range(pag_num - 9, pag_num + 1)
+        else:
+            pag_range = range(curuent_page_num - 5, curuent_page_num + 5)
     template = loader.get_template('draw/drawview.html')
     context = {
         'latest_question_list': latest_question_list,
+        "paginator": paginator,
+        "curuent_page": curuent_page,
+        "curuent_page_num": curuent_page_num,
+        "pag_range": pag_range,
     }
     return HttpResponse(template.render(context, request))
 
@@ -421,22 +504,53 @@ def admin_reg(request):
         })
 
 
-# 新添加
+@csrf_exempt
+def update_log(request):
+    if request.method == "GET":
+        log_list = UpdateLog.objects.order_by('-pub_date')[:]
+        log = ""
+        if log_list:
+            log = log_list[0]
+        return render(request, 'draw/update_log.html', {
+            'log': log,
+        })
+    elif request.method == "POST":
+        data = request.POST
+        msg = data['msg']
+        print(data, type(msg), sep=' ')
+        if msg == "1":
+            have_log = data['have_log']
+            log_list = UpdateLog.objects.order_by('-pub_date')[:]
+            log = log_list[0]
+            log.log_text = have_log
+        else:
+            not_log = data['not_log']
+            log = UpdateLog()
+            log.log_text = not_log
+            log.pub_date = timezone.now()
+        log.save()
+        return HttpResponse('success')
+
+
 def user_main(request, username):
     if request.method == 'GET':
         msg = ""
-        user_list = MyUser.objects.order_by('-boom_num')[:]
+        msg1 = ""
+        user_list = MyUser.objects.order_by('-boom_num')[:1]
         latest_question_list = DrawQuestion.objects.order_by('-pub_date')[:]
+        like_list = MyUser.objects.order_by('-likes')[:1]
+        print(like_list[0].username)
         question_list = []
         for question in latest_question_list:
             for choice in question.drawchoice_set.all():
                 if choice.boom == 1 and choice.user_id == MyUser.objects.get(username=username).id:
-                    print(question.draw_question_text)
                     question_list.append(DrawQuestion.objects.get(id=choice.question_id))
                     break
         if username == user_list[0].username:
             msg = "1"
-        try:
+        if username == like_list[0].username:
+            msg1 = "1"
+        if MyUser.objects.filter(username=username) and MyUser.objects.filter(username=request.user):
             user = MyUser.objects.get(username=username)
             user_now = MyUser.objects.get(username=request.user)
             username = user_now.nick_name
@@ -447,11 +561,54 @@ def user_main(request, username):
                 "email": email,
                 "msg": msg,
                 "question_list": question_list,
+                "msg1": msg1,
             })
-        except:
+        else:
             user = MyUser.objects.get(username=username)
             return render(request, "draw/user_main.html", {
                 "user": user,
                 "msg": msg,
                 "question_list": question_list,
+                "msg1": msg1,
             })
+
+
+@csrf_exempt
+def add_likes(request):
+    if request.method == 'POST':
+        data = request.POST
+        like_id = data['like_id']
+        liked_id = data['liked_id']
+        if like_id == "None":
+            return HttpResponse("not_login")
+        liked_user = MyUser.objects.get(id=liked_id)
+        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        cursor = mydb.cursor()
+        sql = "SELECT max(id) FROM draw_likenum"
+        cursor.execute(sql)
+        get_table = cursor.fetchall()
+        list_out_put = [i[0] for i in get_table]
+        if list_out_put[0]:
+            max_id = list_out_put[0]
+        else:
+            max_id = 0
+        sql = "UPDATE sqlite_sequence SET seq = ('%s') WHERE name = 'draw_likenum';" % (max_id)
+        cursor.execute(sql)
+        mydb.commit()
+        if LikeNum.objects.filter(user_id=like_id, liked_user_id=liked_id):
+            LikeNum.objects.get(user_id=like_id, liked_user_id=liked_id).delete()
+            liked_user.likes = F('likes') - 1
+            liked_user.save()
+            liked_user = MyUser.objects.get(id=liked_id)
+            data = 'not_like+' + str(liked_user.likes)
+            return HttpResponse(data)
+        else:
+            like = LikeNum()
+            like.user_id = like_id
+            like.liked_user_id = liked_id
+            liked_user.likes = F('likes') + 1
+            like.save()
+            liked_user.save()
+            liked_user = MyUser.objects.get(id=liked_id)
+            data = 'like+' + str(liked_user.likes)
+            return HttpResponse(data)

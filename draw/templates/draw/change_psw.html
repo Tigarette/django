@@ -6,7 +6,7 @@
     <title>张竣想修改信息</title>
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
-    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css" rel="stylesheet">
 </head>
 {% if user.is_authenticated %}
@@ -25,7 +25,6 @@
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link active" data-toggle="dropdown" href="#">
                             {{ user.nick_name }}
@@ -53,7 +52,6 @@
                             </button>
                         </div>
                     </li>
-                {% endif %}
             </ul>
         </nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -75,7 +73,7 @@
                                 var value= "{{ user.email }}";
                                 value = value.split('@');
                                 value = value[0];
-                                img1.src = "http://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
+                                img1.src = "https://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
                             }
                         </script>
                 </div>
@@ -150,6 +148,9 @@
                                         <input type="submit" class="btn btn-primary form-control" onclick="ChangePsw()" value="提交">
                                     </div>
                                     <div class="form-group">
+                                        <input type="submit" class="btn btn-default form-control" onclick="index()" value="返回主页">
+                                    </div>
+                                    <div class="form-group">
                                         <input type="submit" class="btn btn-default form-control" onclick="EmailRightThree()" value="获取验证码">
                                     </div>
                                 </div>
@@ -162,7 +163,7 @@
     </div>
     <script src="/static/admin/js/jquery.min.js"></script>
     <script src="/static/admin/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
     <script src="/static/admin/js/myajax.js"></script>
     <script src="/static/admin/js/myJavascript.js"></script>
 </body>
@@ -173,7 +174,7 @@
         <div class="modal-dialog" style="margin-top: 10%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title text-center">还未登录请先<a href="{% draw:login %}">登录</a></h4>
+                    <h4 class="modal-title text-center">还未登录请先<a href="{% url 'draw:login' %}">登录</a></h4>
                 </div>
                 <div class="modal-body">
                     <a class="nav-link">
