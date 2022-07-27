@@ -108,6 +108,18 @@
                                 <p>抽签</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{% url 'video:index' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-video"></i>
+                                <p>视频</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'video:rankList' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-list-ol"></i>
+                                <p>谁是卷王</p>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -140,6 +152,9 @@
                                             <h6 class="card-text">姓名: {{ user.nick_name }}
                                                 {% if msg %}
                                                 <span class="badge badge-primary">最强幸运儿</span>
+                                                {% endif %}
+                                                {% if msg2 %}
+                                                <span class="badge badge-danger">卷王</span>
                                                 {% endif %}
                                             </h6>
                                             <h6 class="card-text">获赞次数: {{ user.likes }} 次

@@ -20,5 +20,6 @@ from draw.views import main_html
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('draw/', include('draw.urls')),
+    path('video/', include('video.urls')),
     path('', main_html, name='main'),
 ]

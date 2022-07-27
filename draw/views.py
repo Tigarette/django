@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from chouqian.settings import EMAIL_FROM
 from django.core.paginator import Paginator
 from django.db.models import F
+import os
 
 
 # Create your views here.
@@ -152,7 +153,7 @@ def register_view(request):
         re_password = data['re_password']
         email = data['email']
         code = data['code']
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
         sql = "SELECT max(id) FROM emailpro WHERE email = ('%s')" % (email)
         cursor.execute(sql)
@@ -173,6 +174,9 @@ def register_view(request):
         elif code != email_code:
             return HttpResponse("not_code")
         else:
+            sql = "DELETE FROM emailpro WHERE code=('%s') AND email=('%s') AND send_type='register';" % (email_code, email)
+            cursor.execute(sql)
+            mydb.commit()
             user = MyUser()
             user.username = username
             user.password = make_password(password)
@@ -202,7 +206,7 @@ def add_new_draw(request):
         draw_name = data['draw_name']
         human_num = int(data['human_num'])
         boom_num = int(data['boom_num'])
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
         cursor.execute("SELECT draw_question_text FROM draw_drawquestion;")
         get_table = cursor.fetchall()
@@ -222,7 +226,7 @@ def add_new_draw(request):
         draw.save()
         text = ["猜猜是不是我", "其实就是我", "不是我不是我", "是我旁边那个"]
         user = MyUser.objects.get(username='admin')
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
         cursor.execute("SELECT max(flag) FROM draw_drawchoice;")
         get_table = cursor.fetchall()
@@ -300,7 +304,7 @@ def draw_begin(request, draw_id):
         user = request.user
 
         # 新添加:判断用户是否已经抽过签
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
         sql = "SELECT user_id FROM draw_drawchoice where question_id = ('%s')" % (question.pk)
         cursor.execute(sql)
@@ -401,7 +405,7 @@ def forget_psw(request):
         re_password = data['re_password']
         email = data['email']
         code = data['code']
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
         sql = "SELECT max(id) FROM emailpro WHERE email = ('%s')" % (email)
         cursor.execute(sql)
@@ -423,6 +427,9 @@ def forget_psw(request):
         elif code != email_code:
             return HttpResponse("not_code")
         else:
+            sql = "DELETE FROM emailpro WHERE code=('%s') AND email=('%s');" % (email_code, email)
+            cursor.execute(sql)
+            mydb.commit()
             user.password = make_password(password)
             user.save()
             return HttpResponse("success")
@@ -441,7 +448,7 @@ def change_psw(request):
         email = data['email']
         code = data['code']
         if code is not '':
-            mydb = sqlite3.connect("../chouqian/db.sqlite3")
+            mydb = sqlite3.connect("db.sqlite3")
             cursor = mydb.cursor()
             sql = "SELECT max(id) FROM emailpro WHERE email = ('%s')" % (email)
             cursor.execute(sql)
@@ -536,16 +543,19 @@ def user_main(request, username):
     if request.method == 'GET':
         msg = ""
         msg1 = ""
+        msg2 = ""
         user_list = MyUser.objects.order_by('-boom_num')[:1]
         latest_question_list = DrawQuestion.objects.order_by('-pub_date')[:]
         like_list = MyUser.objects.order_by('-likes')[:1]
-        print(like_list[0].username)
+        time_list = MyUser.objects.order_by('-time')[:1]
         question_list = []
         for question in latest_question_list:
             for choice in question.drawchoice_set.all():
                 if choice.boom == 1 and choice.user_id == MyUser.objects.get(username=username).id:
                     question_list.append(DrawQuestion.objects.get(id=choice.question_id))
                     break
+        if username == time_list[0].username:
+            msg2 = "1"
         if username == user_list[0].username:
             msg = "1"
         if username == like_list[0].username:
@@ -562,6 +572,7 @@ def user_main(request, username):
                 "msg": msg,
                 "question_list": question_list,
                 "msg1": msg1,
+                "msg2": msg2,
             })
         else:
             user = MyUser.objects.get(username=username)
@@ -570,6 +581,7 @@ def user_main(request, username):
                 "msg": msg,
                 "question_list": question_list,
                 "msg1": msg1,
+                "msg2": msg2,
             })
 
 
@@ -582,12 +594,13 @@ def add_likes(request):
         if like_id == "None":
             return HttpResponse("not_login")
         liked_user = MyUser.objects.get(id=liked_id)
-        mydb = sqlite3.connect("../chouqian/db.sqlite3")
+        mydb = sqlite3.connect("db.sqlite3")
         cursor = mydb.cursor()
-        sql = "SELECT max(id) FROM draw_likenum"
+        sql = "SELECT max(id) FROM draw_likenum;"
         cursor.execute(sql)
         get_table = cursor.fetchall()
         list_out_put = [i[0] for i in get_table]
+        print(list_out_put)
         if list_out_put[0]:
             max_id = list_out_put[0]
         else:

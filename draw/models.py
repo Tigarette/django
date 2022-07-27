@@ -21,6 +21,8 @@ class MyUser(AbstractUser):
     nick_name = models.CharField(max_length=10)
     add_draw = models.CharField(max_length=10)
     give_power = models.CharField(max_length=10)
+    time_text = models.CharField(max_length=100)
+    time = models.IntegerField(default=0)
 
 
 class DrawChoice(models.Model):
