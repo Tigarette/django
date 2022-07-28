@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ user.nick_name }}的主页</title>
+    <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
+    <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
+    <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.1.1/css/all.css" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-dark navbar-lightblue">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="{% url 'draw:index' %}" class="nav-link">主页</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            {% if username %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link active" data-toggle="dropdown" href="#">
+                        {{ username }}
+                        <i class="right fa fa-caret-down"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="min-width:30px;" >
+                        <a href="{% url 'draw:user_main' user.username %}" class="dropdown-item">
+                               <i class="fas fa-globe-asia mr-2"></i>个人主页
+                            </a>
+                            <button class="dropdown-item btn btn-primary" onclick="change_psw()">
+                               <i class="fas fa-solid fa-key mr-2"></i>修改个人信息
+                            </button>
+                            {% if user.add_draw or user.is_superuser%}
+                            <button class="dropdown-item btn btn-primary" onclick="add_draw()">
+                                <i class="fas fa-solid fa-plus mr-2"></i>添加抽签主题
+                            </button>
+                            {% endif %}
+                            {% if user.give_power or user.is_superuser%}
+                            <button class="dropdown-item btn btn-primary" onclick="add_power()">
+                               <i class="fas fa-plus-circle mr-2"></i>添加权限
+                            </button>
+                            {% endif %}
+                            <button class="dropdown-item btn btn-primary" onclick="logout()">
+                                <i class="fas fa fa-power-off mr-2"></i>退出登录
+                            </button>
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
+        </nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="{% url 'draw:index' %}" class="brand-link">
+                <img src="https://tyy.ilotus.top/static/image/fireball.png" alt="HomeProtect Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">Stalas</span>
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    {% if username %}
+                        <div class="image">
+                            <img id="img1" src="" class="img-circle elevation-2" alt="User Image">
+                        </div>
+                        <div class="info">
+                            <a href="{% url 'draw:user_main' request.user %}" class="d-block">{{ username }}</a>
+                        </div>
+                        <script>
+                            huoqu()
+                            function huoqu(){
+                                var value= "{{ email }}";
+                                value = value.split('@');
+                                value = value[0];
+                                img1.src = "https://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=40";
+                            }
+                        </script>
+                    {% else %}
+                        <div class="info" style="width: 234px;text-align: center">
+                            <a href="{% url 'draw:login' %}" class="d-block" style="display: block"><button type="button" class="btn btn-secondary" style="width: 100px">登录</button></a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-inline">
+                    <div class="input-group" data-widget="sidebar-search">
+                        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fas fa-search fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <li class="nav-item">
+                            <a href="{% url 'draw:index' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-home"></i>
+                                <p>主页</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'draw:detail' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-file"></i>
+                                <p>抽签</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'video:index' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-video"></i>
+                                <p>视频</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'video:rankList' %}" class="nav-link">
+                                <i class="nav-icon fas fa-solid fa-list-ol"></i>
+                                <p>谁是卷王</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+         <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                </div>
+            </div>
+             <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="card mb-3" style="max-width: 540px">
+                                <div class="row no-gutters">
+                                    <div class="col-sm-4">
+                                        <img id="img" src="" alt="User Image" class="w-auto p-3 h-auto d-inline-block">
+                                        <script>
+                                            huoqu()
+                                            function huoqu(){
+                                                var value= "{{ user.email }}";
+                                                value = value.split('@');
+                                                value = value[0];
+                                                img.src = "https://q1.qlogo.cn/g?b=qq&nk=" + value + "&s=4";
+                                            }
+                                        </script>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="card-body">
+                                            <h6 class="card-text">姓名: {{ user.nick_name }}
+                                                {% if msg %}
+                                                <span class="badge badge-primary">最强幸运儿</span>
+                                                {% endif %}
+                                                {% if msg2 %}
+                                                <span class="badge badge-danger">卷王</span>
+                                                {% endif %}
+                                            </h6>
+                                            <h6 class="card-text">获赞次数: {{ user.likes }} 次
+                                                {% if msg1 %}
+                                                <span class="badge badge-warning">最受欢迎人</span>
+                                                {% endif %}
+                                            </h6>
+                                            <h6 class="card-text">邮箱: {{ user.email }}</h6>
+                                            <h6 class="card-text">中奖: {{ user.boom_num }} 次</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="card">
+                                <div class="card-header" style="text-align: center">
+                                    中奖主题
+                                </div>
+                                <div class="card-body" style="text-align: center">
+                                    <div class="row">
+                                    {% for question in question_list %}
+                                        {% if forloop.counter <= 2 %}
+                                        <div class="col-sm-6">
+                                            <a href="{% url 'draw:draw' question.id %}">
+                                            <button class="btn btn-outline-primary btn-block">
+                                                {{ question.draw_question_text }}
+                                            </button>
+                                            </a>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-6" style="margin-top: 15px">
+                                            <a href="{% url 'draw:draw' question.id %}">
+                                            <button class="btn btn-outline-primary btn-block">
+                                                {{ question.draw_question_text }}
+                                            </button>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </section>
+         </div>
+    </div>
+    <script src="/static/admin/js/jquery.min.js"></script>
+    <script src="/static/admin/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+    <script src="/static/admin/js/myJavascript.js"></script>
+    <script src="/static/admin/js/myajax.js"></script>
+</body>
+</html>
