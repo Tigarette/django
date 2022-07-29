@@ -11,7 +11,7 @@
 ## 基于Docker运行本项目
 ### 构建
 ```bash
-docker build -t hnie:viedo . 
+docker build -t hnie:video . 
 ```
 ### 运行
 ```bash
