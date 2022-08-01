@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>张竣的抽签列表</title>
+    <title>抽签列表</title>
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
     <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
@@ -81,6 +81,9 @@
                     {% else %}
                         <div class="info" style="width: 234px;text-align: center">
                             <a href="{% url 'draw:login' %}" class="d-block" style="display: block"><button type="button" class="btn btn-secondary" style="width: 100px">登录</button></a>
+                        </div>
+                        <div class="info" style="width: 234px;text-align: center">
+                            <a href="{% url 'draw:register' %}" class="d-block" style="display: block"><button type="button" class="btn btn-secondary" style="width: 100px">注册</button></a>
                         </div>
                     {% endif %}
                 </div>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>张竣最卷</title>
+    <title>卷王争霸</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/video.js/7.20.1/alt/video-js-cdn.css" rel="stylesheet">
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
@@ -82,6 +82,9 @@
                     {% else %}
                         <div class="info" style="width: 234px;text-align: center">
                             <a href="{% url 'draw:login' %}" class="d-block" style="display: block"><button type="button" class="btn btn-secondary" style="width: 100px">登录</button></a>
+                        </div>
+                        <div class="info" style="width: 234px;text-align: center">
+                            <a href="{% url 'draw:register' %}" class="d-block" style="display: block"><button type="button" class="btn btn-secondary" style="width: 100px">注册</button></a>
                         </div>
                     {% endif %}
                 </div>
@@ -195,7 +198,7 @@
                                                 </a>
                                             </li>
                                             {% else %}
-                                            <li class="page-item disabled">
+                                            <li class="page-item">
                                                 <a class="page-link" href="?page={{ curuent_page.previous_page_number }}" aria-label="Previous">
                                                     <span aria-hidden="true">&laquo;</span>
                                                 </a>
@@ -216,7 +219,7 @@
                                             </li>
                                             {% else %}
                                             <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Next">
+                                                <a class="page-link" href="?page={{ curuent_page.next_page_number }}" aria-label="Next">
                                                     <span aria-hidden="true">&raquo;</span>
                                                 </a>
                                             </li>

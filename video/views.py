@@ -10,7 +10,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from draw.models import *
 
-video_path = "\\\\10.0.38.10\\Video"
+video_path = "/mnt/dsm"
 
 
 def video(request, par, type, id):
@@ -47,28 +47,26 @@ def file_iterator(file_name, chunk_size=1048576, offset=0, length=None):
 def stream_video(request, par, type, id):
     """将视频文件以流媒体的方式响应"""
     range_header = request.META.get('HTTP_RANGE', '').strip()
-    range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
+    range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)  # 使匹配大小写不敏感
     range_match = range_re.match(range_header)
-    # 这里规定存放视频文件夹
-    # path = '\\\\10.0.38.10\\Video\\test\\' + arg_path + '.mp4'
     path = os.path.join(video_path, par, type, id)
-    size = os.path.getsize(path)
+    size = os.path.getsize(path)  # 文件总大小
     content_type, encoding = mimetypes.guess_type(path)
     content_type = content_type or 'application/octet-stream'
     if range_match:
         first_byte, last_byte = range_match.groups()
         first_byte = int(first_byte) if first_byte else 0
-        last_byte = first_byte + 1024 * 1024 * 10
+        last_byte = first_byte + 1024 * 1024 * 10  # 设定一次读取10兆
         if last_byte >= size:
             last_byte = size - 1
         length = last_byte - first_byte + 1
         resp = StreamingHttpResponse(file_iterator(path, offset=first_byte, length=length), status=206,
-                                     content_type=content_type)
+                                     content_type=content_type)  # 流式传播
         resp['Content-Length'] = str(length)
         resp['Content-Range'] = 'bytes %s-%s/%s' % (first_byte, last_byte, size)
     else:
         resp = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
-        resp['Content-Length'] = str(size)
+        resp['Content-Length'] = str(size)  # 按此长度来显示返回的内容
     resp['Accept-Ranges'] = 'bytes'
     return resp
 
@@ -198,7 +196,7 @@ def rankList(request):
                 pag_range = range(pag_num - 9, pag_num + 1)
             else:
                 pag_range = range(curuent_page_num - 5, curuent_page_num + 5)
-        print(liked_user_list)
+        # print(liked_user_list)
         return render(request, 'video/ranklist.html', {
             'user': user,
             "user_list": liked_user_list,

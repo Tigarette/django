@@ -1,3 +1,4 @@
+import requests
 from django.contrib.auth import logout, login
 from django.contrib.auth.hashers import check_password, make_password
 from django.http import HttpResponse
@@ -8,8 +9,6 @@ from .models import DrawQuestion, DrawChoice, MyUser, EmailPro, UpdateLog, LikeN
 import random
 from django.utils import timezone
 import sqlite3
-from django.core.mail import send_mail
-from chouqian.settings import EMAIL_FROM
 from django.core.paginator import Paginator
 from django.db.models import F
 import os
@@ -99,11 +98,11 @@ def sign_in(request):
         data = request.POST
         username = data['username']
         password = data['password']
-        if username is '' and password is '':
+        if username == '' and password == '':
             return HttpResponse("用户名和密码都为空,请检查是否输入")
-        elif username is '':
+        elif username == '':
             return HttpResponse("用户名为空,请检查是否输入")
-        elif password is '':
+        elif password == '':
             return HttpResponse("密码为空,请检查是否输入")
         if not MyUser.objects.filter(username=username):
             return HttpResponse("该用户不存在")
@@ -161,7 +160,7 @@ def register_view(request):
         list_out_put = [i[0] for i in get_table]
         max_id = list_out_put[0]
         email_code = EmailPro.objects.get(id=max_id).code
-        if username is '' or password is '' or re_password is '' or email is '' or nickname is '':
+        if username == '' or password == '' or re_password == '' or email == '' or nickname == '':
             return HttpResponse("all_empty")
         elif password != re_password:
             return HttpResponse("password_error")
@@ -193,7 +192,6 @@ def logout_view(request):
 
 
 def main_html(request):
-    print(MyUser.add_draw)
     return render(request, 'draw/main.html')
 
 
@@ -211,7 +209,7 @@ def add_new_draw(request):
         cursor.execute("SELECT draw_question_text FROM draw_drawquestion;")
         get_table = cursor.fetchall()
         list_out_put = [i[0] for i in get_table]
-        if draw_name is '' or human_num is '' or boom_num is '':
+        if draw_name == '' or human_num == '' or boom_num == '':
             return HttpResponse("empty")
         elif human_num <= 0 or boom_num <= 0:
             return HttpResponse("less_num")
@@ -233,7 +231,7 @@ def add_new_draw(request):
         list_out_put = [i[0] for i in get_table]
         max_flag = list_out_put[0]
         print(max_flag)
-        if max_flag is None:
+        if max_flag == None:
             max_flag = 0
         for i in range(max_flag, human_num + max_flag):
             choice = DrawChoice()
@@ -274,7 +272,7 @@ def add_power(request):
         username = data['username']
         add_draw = data['add_draw']
         add_power_power = data['add_power']
-        if username is '':
+        if username == '':
             return HttpResponse("name_empty")
         elif not MyUser.objects.filter(username=username):
             return HttpResponse("nobody")
@@ -339,12 +337,12 @@ def random_str(randomlength=8):
 
 @csrf_exempt  # 新添加
 def send_register_email(request):  # 类型为注册
-    email = request.POST['email']
-    send_type = request.POST['type']
-    email_title = ''
+    data = request.POST
+    email = data.get("email")
+    send_type = data.get("type")
     email_body = ''
     if send_type == 'register':
-        if email is '':
+        if email == '':
             return HttpResponse("empty")
         elif '@' not in email:
             return HttpResponse("not_email")
@@ -356,10 +354,9 @@ def send_register_email(request):  # 类型为注册
         code = random_str(6)
         email_recode.code = code
         email_recode.save()
-        email_title = '超级离谱的抽签网站之邮箱验证'
-        email_body = '张竣表示,顾客是上帝,上帝这是你的验证码请查收:{0}'.format(code)
+        email_body = '你好,你的验证码是 :{0},不要泄露给他人.'.format(code)
     elif send_type == 'forget':
-        if email is '':
+        if email == '':
             return HttpResponse("empty")
         elif '@' not in email:
             return HttpResponse("not_email")
@@ -369,10 +366,9 @@ def send_register_email(request):  # 类型为注册
         code = random_str(8)
         email_recode.code = code
         email_recode.save()
-        email_title = '超级离谱的抽签网站之忘记密码'
-        email_body = '密码都能忘记?张竣大发慈悲给了你一串验证码并且非常鄙视你:{0}'.format(code)
+        email_body = '你好,你的验证码是 :{0},不要泄露给他人.'.format(code)
     elif send_type == 'change':
-        if email is '':
+        if email == '':
             return HttpResponse("empty")
         elif '@' not in email:
             return HttpResponse("not_email")
@@ -388,9 +384,14 @@ def send_register_email(request):  # 类型为注册
         code = random_str(4)
         email_recode.code = code
         email_recode.save()
-        email_title = '超级离谱的抽签网站之修改信息'
-        email_body = '要修改信息是吧.张竣知道你要修改信息于是给了你一个验证码:{0}'.format(code)
-    send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        email_body = '你好,你的验证码是 :{0},不要泄露给他人.'.format(code)
+    url = 'http://172.31.0.96/mail/sendEmail/'
+    data = {
+        "code": "acmore",
+        "email": email,
+        "content": email_body,
+    }
+    requests.post(url=url, data=data)
     return HttpResponse("success")
 
 
@@ -413,7 +414,7 @@ def forget_psw(request):
         list_out_put = [i[0] for i in get_table]
         max_id = list_out_put[0]
         email_code = EmailPro.objects.get(id=max_id).code
-        if username is '' or password is '' or re_password is '' or email is '' or code is '':
+        if username == '' or password == '' or re_password == '' or email == '' or code == '':
             return HttpResponse("all_empty")
         elif password != re_password:
             return HttpResponse("password_error")
@@ -441,13 +442,12 @@ def change_psw(request):
         return render(request, 'draw/change_psw.html')
     elif request.method == 'POST':
         data = request.POST
-        print(data)
         username = data['username']
         old_password = data['old_password']
         new_password = data['new_password']
         email = data['email']
         code = data['code']
-        if code is not '':
+        if code != '':
             mydb = sqlite3.connect("db.sqlite3")
             cursor = mydb.cursor()
             sql = "SELECT max(id) FROM emailpro WHERE email = ('%s')" % (email)
@@ -457,20 +457,20 @@ def change_psw(request):
             max_id = list_out_put[0]
             email_code = EmailPro.objects.get(id=max_id).code
         user = MyUser.objects.get(username=username)
-        if old_password is '':
+        if old_password == '':
             return HttpResponse('empty')
         elif not check_password(old_password, user.password):
             return HttpResponse('error_psw')
-        elif new_password is '' and email is '':
+        elif new_password == '' and email == '':
             return HttpResponse('no_change')
-        elif new_password is '' and email is not '':
+        elif new_password == '' and email != '':
             if email_code != code:
                 return HttpResponse('code_error')
             elif check_password(old_password, user.password):
                 user.email = email
                 user.save()
                 return HttpResponse('change_email')
-        elif new_password is not '' and email is '':
+        elif new_password != '' and email == '':
             if old_password == new_password:
                 return HttpResponse('same')
             elif len(new_password) < 6:
@@ -480,7 +480,7 @@ def change_psw(request):
                 user.save()
                 logout(request)
                 return HttpResponse('change_psw')
-        elif new_password is not '' and email is not '':
+        elif new_password != '' and email != '':
             if check_password(old_password, user.password):
                 user.password = make_password(new_password)
                 user.email = email

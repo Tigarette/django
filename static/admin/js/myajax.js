@@ -1,3 +1,14 @@
+function setTime(val, count) {
+    if(count === 0){
+        val.disabled = false;
+        val.innerHTML = '发送验证码';
+        count = 60;
+    }else{
+        val.innerHTML = '重新发送(' + count + ')';
+        count --;
+    }
+    return count;
+}
 function GetInfo(){
     var param ={
         "username": $('#username').val(),
@@ -168,7 +179,13 @@ function DrawView(s,e){
         }
     })
 }
-function EmailRight(){
+function EmailRight(val){
+    val.disabled = true;
+    let count = 60;
+    count = setTime(val, count);
+    setInterval(function (){
+        count = setTime(val, count);
+    },1000);
     $.ajax({
         type: "POST",
         data: {
@@ -233,7 +250,13 @@ function ForgetPsw(){
         }
     })
 }
-function EmailRightTwo(){
+function EmailRightTwo(val){
+    val.disabled = true;
+    let count = 60;
+    count = setTime(val, count);
+    setInterval(function (){
+        count = setTime(val, count);
+    },1000);
     $.ajax({
         type: "POST",
         data: {
@@ -244,13 +267,13 @@ function EmailRightTwo(){
         async: true,
         datatype: 'text',
         url: "/draw/sendemail/",
-        success: function (data){
-            if(data == "success"){
-                document.getElementById("code_code").innerHTML = "<input type=\"text\" class=\"form-control\" placeholder=\"验证码\" autocomplete=\"off\" id=\"code\">"
-            } else if(data == "empty"){
+        success: function (resp){
+            if(resp == "empty"){
                 document.getElementById("error_msg").innerHTML = "<i class='nav-icon fas fa-exclamation-triangle'></i>邮箱为空,检查是否输入!"
-            }else if(data == "not_email"){
+            }else if(resp == "not_email"){
                 document.getElementById("error_msg").innerHTML = "<i class='nav-icon fas fa-exclamation-triangle'></i>邮箱格式错误!"
+            }else if(resp == "success"){
+                document.getElementById("code_code").innerHTML = "<input type=\"text\" class=\"form-control\" placeholder=\"验证码\" autocomplete=\"off\" id=\"code\">"
             }
         },
         error: function (){
@@ -314,7 +337,13 @@ function ChangePsw(){
     })
 }
 // 新添加
-function EmailRightThree(){
+function EmailRightThree(val){
+    val.disabled = true;
+    let count = 60;
+    count = setTime(val, count);
+    setInterval(function (){
+        count = setTime(val, count);
+    },1000);
     $.ajax({
         type: "POST",
         data: {
