@@ -128,15 +128,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'draw.MyUser'
 
-EMAIL_HOST = "smtp.qq.com"
 
-EMAIL_PORT = 25
-
-EMAIL_HOST_USER = ''  #邮箱用户
-
-EMAIL_HOST_PASSWORD = ''  #邮箱授权码
-
-EMAIL_USE_TLS = False
-
-EMAIL_FROM = '2054806568@qq.com'  # 邮箱用户
-
+CSRF_TRUSTED_ORIGINS = ["http://10.0.38.112"]

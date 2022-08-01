@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>张竣想修改信息</title>
+    <title>修改信息</title>
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
     <link href="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" rel="stylesheet">
@@ -55,7 +55,7 @@
             </ul>
         </nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="index.html" class="brand-link">
+            <a href="{% url 'draw:index' %}" class="brand-link">
                 <img src="https://tyy.ilotus.top/static/image/fireball.png" alt="HomeProtect Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="brand-text font-weight-light">Stalas</span>
             </a>
@@ -163,7 +163,7 @@
                                         <input type="submit" class="btn btn-default form-control" onclick="index()" value="返回主页">
                                     </div>
                                     <div class="form-group">
-                                        <input type="submit" class="btn btn-default form-control" onclick="EmailRightThree()" value="获取验证码">
+                                        <button type="button" class="btn btn-default form-control" onclick="EmailRightThree(this)">获取验证码</button>
                                     </div>
                                 </div>
                             </form>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>张竣爱看课</title>
+    <title>课程小列表</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/video.js/7.20.1/alt/video-js-cdn.css" rel="stylesheet">
     <link rel="shortcut icon" href='https://tyy.ilotus.top/static/image/fireball.png' type="image/x-icon">
     <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
@@ -55,7 +55,7 @@
             </ul>
         </nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="index.html" class="brand-link">
+            <a href="{% url 'draw:index' %}" class="brand-link">
                 <img src="https://tyy.ilotus.top/static/image/fireball.png" alt="HomeProtect Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="brand-text font-weight-light">Stalas</span>
             </a>
@@ -119,9 +119,9 @@
                 </nav>
             </div>
         </aside>
-        <div class="content-wrapper" id="get">
+        <div class="content-wrapper">
             <div class="content-header"></div>
-            <div class="content" >
+            <div class="content" style="width: 80%;height: 100%;margin: 10px auto">
                 <video id="example_video_1" class="video-js vjs-default-skin vjs-big-play-centered vjs-fluid" controls preload="none" data-setup="{}">
                     <source src="{% url 'video:videopath' par type id %}" type='video/mp4'>
                 </video>
