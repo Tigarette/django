@@ -10,7 +10,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from draw.models import *
 
-video_path = "\\\\10.0.38.10\\Video"
+video_path = "\\\\10.0.38.10\Vedio"
 
 
 def video(request, par, type, id):
