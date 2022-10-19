@@ -131,8 +131,9 @@ def typeView(request, id):
 
 
 @csrf_exempt
-def addTime(request):
+def addTime(request, currentTime):
     if request.method == 'POST':
+        user = request.user
         data = request.POST
         getTime = data['time']
         if int(getTime) != 5:

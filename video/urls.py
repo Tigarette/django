@@ -4,7 +4,7 @@ from . import views
 app_name = "video"
 urlpatterns = [
     path('', views.index, name='index'),
-    path('addTime/', views.addTime, name='addTime'),
+    path('addTime/<str:currentTime>', views.addTime, name='addTime'),
     path('ranklist/', views.rankList, name='rankList'),
     path('<str:id>/', views.typeView, name='type'),
     # video/是播放视频的页面

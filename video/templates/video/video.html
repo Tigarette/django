@@ -172,7 +172,7 @@ function countTime(time) {
         cache: false,
         async: true,
         datatype: 'text',
-        url:'/video/addTime/',
+        url:'/video/addTime/' + $('#example_video_1').currentTime,
         success: function (data){
             if(data === 'success'){
                 console.log(1)

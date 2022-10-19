@@ -64,8 +64,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-        'libraries':{
-                'tags':  'video.templatetags.tags',
+            'libraries': {
+                'tags': 'video.templatetags.tags',
 
             }
         },
@@ -78,9 +78,17 @@ WSGI_APPLICATION = 'chouqian.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'media',
+        'USER': 'root',
+        'PASSWORD': 'HNIEACMore',
+        'HOST': '10.0.38.112',
+        'PORT': '3306',
     }
 }
 
@@ -127,6 +135,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'draw.MyUser'
-
 
 CSRF_TRUSTED_ORIGINS = ["http://10.0.38.112"]

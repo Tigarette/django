@@ -63,3 +63,10 @@ class LikeNum(models.Model):
 
     class Meta:
         verbose_name_plural = 'user'
+
+
+class History(models.Model):
+    user = models.ForeignKey(MyUser, null=True, on_delete=models.SET_NULL, related_name='用户')
+    video_id = models.CharField(max_length=255)
+    time = models.IntegerField('视频进度')
+
